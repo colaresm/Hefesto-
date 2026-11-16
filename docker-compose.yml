@@ -1,0 +1,31 @@
+name: hefesto
+
+services:
+  hefesto:
+    build:
+      context: .
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+        EXTRA_PACKAGES: ${HEFESTO_EXTRA_PACKAGES:-}
+    image: hefesto:1.0.0
+    container_name: hefesto
+    ports:
+      - "${HEFESTO_PORT:-8501}:8501"
+    volumes:
+      - ./outputs:/app/outputs
+      - ./data:/app/data
+    environment:
+      HEFESTO_LOG_LEVEL: ${HEFESTO_LOG_LEVEL:-INFO}
+    restart: unless-stopped
+
+  hefesto-cli:
+    image: hefesto:1.0.0
+    profiles: ["cli"]
+    entrypoint: ["hefesto"]
+    command: ["--help"]
+    volumes:
+      - ./outputs:/app/outputs
+      - ./data:/app/data
+    environment:
+      HEFESTO_LOG_LEVEL: ${HEFESTO_LOG_LEVEL:-INFO}
